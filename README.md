@@ -24,7 +24,6 @@ deactivate #deactivate venv
 1. Prof Tsai's original script stores the coded transcript as a csv file.
 
 __Wishlist__
-- Purchase a more advanced model?
 - Transform the scores into a 7-point Likert scale.
 - Create a simple (yet appealing) html page that shows the summary of PEER scores.
 - Create a plot that displays how the parent fared in relation to other parents with a similar-aged child.
