@@ -97,7 +97,7 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
     prompt = (
         "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里的 mot 或 fat)唸故事書時的每一句話，\n"
         + "\n".join(ITEMS) +
-        "請用文件的定義: "+ get_definitions("peek.docx") + ##this uses function 3
+        "請用文件的定義: "+ get_definitions("peer.docx") + ##this uses function 3
         "\n\n請依據評估結果，對每個項目： 若觸及則標記為 1，否則留空。 若觸及多個編碼評估, 請選一個標記為 1。"
         "若 speaker 不是 mot 或 fat，請不要評估那句話。" ##this uses function 2.2
         "請在 Notes 里简单说明評估原因。"
