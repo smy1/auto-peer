@@ -7,11 +7,15 @@ from dotenv import load_dotenv
 from docx import Document
 from google import genai
 from google.genai.errors import ServerError
+from openai import OpenAI
 
-# 載入 .env 中的 GEMINI_API_KEY
+# load the API key from .env
 load_dotenv()
 
-# 定義評分項目
+get_ai = "openai" #"gemini" or "openai"
+model = "gpt-4o-mini"
+
+# coding criteria
 ITEMS = [
     #"Prompt",
     "Evaluate",
@@ -41,7 +45,7 @@ def parse_response(response_text): ##function 1: parse response
         if lines and lines[-1].strip() == "```":
             lines = lines[:-1]
         cleaned = "\n".join(lines).strip()
-    
+
     try:
         result = json.loads(cleaned)
         for item in ITEMS:
@@ -50,7 +54,7 @@ def parse_response(response_text): ##function 1: parse response
         return result
     except Exception as e:
         #print(f"Failed to parse JSON： {e}")
-        #print("AI said： ", response_text)
+        #print(response_text)
         return {item: "" for item in ITEMS}
 
 def select_dialogue_column(chunk: pd.DataFrame) -> str: ##function 2.1: select utterance column
@@ -69,14 +73,13 @@ def select_dialogue_column(chunk: pd.DataFrame) -> str: ##function 2.1: select u
 def select_speaker_column(chunk: pd.DataFrame) -> str: ##function 2.2: select speaker column
     """
     根據 CSV 欄位內容自動選取存放逐字稿的欄位。
-    優先檢查常見欄位名稱："text", "utterance", "content", "dialogue"
+    優先檢查常見欄位名稱
     若都不存在，則回傳第一個欄位。
     """
     preferred = ["who", "speaker", "dyad"]
     for col in preferred:
         if col in chunk.columns:
             return col
-    # print("person speaking： ", list(chunk.columns))
     return chunk.columns[0]
 
 def get_definitions(docx_path): ##function 3: get definitions
@@ -94,36 +97,86 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
     提示中要求模型對每筆逐字稿產生 JSON 格式回覆，
     並以指定的 delimiter 分隔各筆結果。
     """
-    prompt = (
-        "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里的 mot 或 fat)唸故事書時的每一句話，\n"
+    prompt_unguided = (
+        "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
         + "\n".join(ITEMS) +
-        "請用文件的定義: "+ get_definitions("peer.docx") + ##this uses function 3
-        "\n\n請依據評估結果，對每個項目： 若觸及則標記為 1，否則留空。 若觸及多個編碼評估, 請選一個標記為 1。"
-        "若 speaker 不是 mot 或 fat，請不要評估那句話。" ##this uses function 2.2
+        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。若觸及多個編碼評估, 請選一個標記為 1。"
+        "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
         "請在 Notes 里简单说明評估原因。"
         " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
         f"{delimiter}\n"
         "例如：\n"
-        #"```json\n"
-        "{\n  \"prompt\": \"1\",\n  \"Evaluate\": \"\",\n  ...\n}\n"
+        "{\n  \"Prompt\": \"1\",\n  \"Evaluate\": \"\",\n  ...\n}\n"
         f"{delimiter}\n"
         "{{...}}\n```"
     )
 
+    prompt_definition = (
+        "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
+        + "\n".join(ITEMS) +
+        "evaluate是對孩子給予回應、回饋、鼓勵或修正,"
+        "expand是將孩子說出來的內容加以延伸重組,"
+        "repeat是鼓勵並引導孩子說答案，而非家長重複說話, 例:你說馬,"
+        "completion是將句尾詞彙或語句空白，等待孩子用口語補上句尾詞彙,"
+        "open-end是無固定答案的問句, 例:小金魚為什麼要一直逃走呢？,"
+        "wh是人事時地物問句, 例:這是什麼？馬怎麼叫？。 不包含是非問題, 例: 你有看到吗？,"
+        "distancing是協助兒童將書中部分情節與自身生活經驗做連結。"
+        "\n\n請依據評估結果，對每個項目： 若觸及則標記為 1，否則留空。 若觸及多個編碼評估, 請選一個標記為 1。"
+        "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
+        "請在 Notes 里简单说明評估原因。\n"
+        " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
+        f"{delimiter}\n"
+        "例如：\n"
+        "{\n  \"Prompt\": \"1\",\n  \"Evaluate\": \"\",\n  ...\n}\n"
+        f"{delimiter}\n"
+        "{{...}}\n```"
+   )
+
+    prompt_full = (
+        "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
+        + "\n".join(ITEMS) +
+        "請用文件的定義: "+ get_definitions("peer.docx") + ##this uses function 3
+        "\n\n請依據評估結果，對每個項目： 若觸及則標記為 1，否則留空。 若觸及多個編碼評估, 請選一個標記為 1。"
+        "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
+        "請在 Notes 里简单说明評估原因。"
+        " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
+        f"{delimiter}\n"
+        "例如：\n"
+        "{\n  \"Prompt\": \"1\",\n  \"Evaluate\": \"\",\n  ...\n}\n"
+        f"{delimiter}\n"
+        "{{...}}\n```"
+   )
+
     batch_text = f"\n{delimiter}\n".join(dialogues)
-    content = prompt + "\n\n" + batch_text
+    content = prompt_definition + "\n\n" + batch_text
 
     try:
-        response = client.models.generate_content(
-            model= "gemini-2.0-flash",# "gemini-1.5-pro",
-            contents=content
-        )
+        if get_ai == "gemini":
+            response = client.models.generate_content(
+                model = model,
+                # temperature=0,
+                contents = content
+            )
+        elif get_ai == "openai":
+            response = client.responses.create(
+                model = model,
+                # temperature=0,
+                input=[
+                    {
+                        "role": "user",
+                        "content": content
+                        }
+                ]
+            )
     except ServerError as e:
         print(f"Failed to call API：{e}")
         return [{item: "" for item in ITEMS} for _ in dialogues]
-    
+
     # print("AI is working： ", response.text) ##too verbose: which utterance is being processed
-    parts = response.text.split(delimiter)
+    if get_ai == "gemini":
+        parts = response.text.split(delimiter)
+    elif get_ai == "openai":
+        parts = response.output_text.split(delimiter)
     results = []
     for part in parts:
         part = part.strip()
@@ -138,24 +191,37 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
 
 def main():
     print("Loading and processing...")
+    # get_prompt = input("prompt_unguided, prompt_definition, or prompt_full? ")
+    # get_ai = input("gemini or openai? ") #!!!WHY IS THIS NOT ACCESSED??
 
     if len(sys.argv) < 2:
         print("csv file is missing: python drei.py <path_to_csv>")
         sys.exit(1)
 
-    print("Loading and processing...")
-
     input_csv = sys.argv[1]
-    output_csv = input_csv[0:-4] + "_processed.csv"
+    output_csv = f"{input_csv[0:-4]}_prompt=D_{model}.csv"
+    print("Using a definition-provided prompt...")
+
     if os.path.exists(output_csv):
-        os.remove(output_csv)
+        output_csv = f"{output_csv[0:-4]}_(1).csv"
+        # os.remove(output_csv)
     
     df = pd.read_csv(input_csv)
-    gemini_api_key = os.environ.get("GEMINI_API_KEY")
-    if not gemini_api_key:
-        raise ValueError("Please enter your API key")
-    client = genai.Client(api_key=gemini_api_key)
-    
+
+    ##choose AI model and API key
+    if get_ai == "gemini":
+        print("Reading GEMINI API key...")
+        gemini_api_key = os.environ.get("GEMINI_API_KEY")
+        if not gemini_api_key:
+            gemini_api_key = input("Enter your GEMINI API key: ")
+        client = genai.Client(api_key=gemini_api_key)
+    elif get_ai == "openai":
+        print("Reading OPENAI API key...")
+        openai_api_key = os.environ.get("OPENAI_API_KEY")
+        if not openai_api_key:
+            openai_api_key = input("Enter your OPENAI API key: ")
+        client = OpenAI(api_key=openai_api_key)
+
     dialogue_col = select_dialogue_column(df) ##this uses function 2.1
     #print(f"使用欄位作為逐字稿：{dialogue_col}") ##too verbose: name of speech column
     
@@ -163,6 +229,7 @@ def main():
 
     batch_size = 10
     total = len(df)
+    print(f"Total number of sentencces to process: {total}")
     for start_idx in range(0, total, batch_size):
         end_idx = min(start_idx + batch_size, total)
         batch = df.iloc[start_idx:end_idx]
