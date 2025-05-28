@@ -204,7 +204,6 @@ def main():
 
     if os.path.exists(output_csv):
         output_csv = f"{output_csv[0:-4]}_(1).csv"
-        # os.remove(output_csv)
     
     df = pd.read_csv(input_csv)
 
