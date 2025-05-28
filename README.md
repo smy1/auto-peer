@@ -33,7 +33,7 @@
 python -m venv venv #create a virtual environment the first time
 .\venv\Scripts\activate #activate venv
 python .\drei.py mc51.csv ##code the file "mc51"
-deactivate #deactivate venv
+# deactivate
 ```
 ## Part 3: Fancy output
 1. Prof Tsai's original script stores the coded transcript as a csv file.
