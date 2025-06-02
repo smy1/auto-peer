@@ -1,4 +1,6 @@
 # Automatic coding of parents' shared reading practice <img src="https://github.com/smy1/swlab/blob/main/script/swlogo.jpg" width=auto height="27">
+A video on the project summary: watch in [Youtube](https://youtu.be/HqQscR9HchA)
+
 - Shared reading is coded using the PEER coding scheme
   - Prompt: Ask questions using CROWD (completion, recall, open-end, wh, distancing)
   - Evaluate: Praise or correct a child's utterance
