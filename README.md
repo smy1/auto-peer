@@ -1,17 +1,24 @@
 # Automatic coding of parents' shared reading practice <img src="https://github.com/smy1/swlab/blob/main/script/swlogo.jpg" width=auto height="27">
-A video on the project summary: watch in [Youtube](https://youtu.be/HqQscR9HchA)
+A video summarising the project: https://youtu.be/HqQscR9HchA  
+- [background](#background)
+- [usage](#usage)
+- [fancy output](#fancy-output)
 
+---
+
+## Background
 - Shared reading is coded using the PEER coding scheme
   - Prompt: Ask questions using CROWD (completion, recall, open-end, wh, distancing)
   - Evaluate: Praise or correct a child's utterance
   - Expand: Elaborate on a child's utterance
   - Repeat: Request a child to say the correct answer
 
-## Part 1: Transcribe the audio file
+## Usage
+### Part 1: Transcribe the audio file
 1. Transcribe an audio recording into an excel file (see [here](https://github.com/smy1/swlab/blob/main/script/audio2xlsx.ipynb)).
 2. Convert the excel file into a csv file.
 
-## Part 2: Code the transcript
+### Part 2: Code the transcript
 1. Download the PEER coding scheme [here](./peer.docx).
 2. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
 3. Download the Python [script](./drei.py) (which is modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py)).
@@ -37,7 +44,8 @@ python -m venv venv #create a virtual environment the first time
 python .\drei.py mc51.csv ##code the file "mc51"
 # deactivate
 ```
-## Part 3: Fancy output
+
+## Fancy output
 1. Prof Tsai's original script stores the coded transcript as a csv file.
 
 __Wishlist__
