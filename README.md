@@ -13,6 +13,8 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
   - Expand: Elaborate on a child's utterance
   - Repeat: Request a child to say the correct answer
 
+---
+
 ## Usage
 ### Part 1: Transcribe the audio file
 1. Transcribe an audio recording into an excel file (see [here](https://github.com/smy1/swlab/blob/main/script/audio2xlsx.ipynb)).
@@ -44,6 +46,8 @@ python -m venv venv #create a virtual environment the first time
 python .\drei.py mc51.csv ##code the file "mc51"
 # deactivate
 ```
+
+---
 
 ## Fancy output
 1. Prof Tsai's original script stores the coded transcript as a csv file.
