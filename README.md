@@ -51,8 +51,10 @@ python .\drei.py mc51.csv ##code the file "mc51"
 
 ## Fancy output
 1. Prof Tsai's original script stores the coded transcript as a csv file.
+2. Sum of scores can be calculated using this [Python script](./summary.py)
 
 __Wishlist__
+- Compare English/Chinese prompts with English/Chinese transcripts.
 - Transform the scores into a 7-point Likert scale.
 - Create a simple (yet appealing) html page that shows the summary of PEER scores.
 - Create a plot that displays how the parent fared in relation to other parents with a similar-aged child.
