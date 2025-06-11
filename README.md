@@ -24,29 +24,17 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 1. Download the PEER coding scheme [here](./peer.docx).
 2. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
 3. Download the Python [script](./drei.py) (which is modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py)).
-   - To **change the AI**, go to _line 15_ and type `get_ai = "openai"` or `get_ai = "gemini"`
-   - To **change the model**, go to _line 16_ and type `model = "the-model-name"`
-   - To **change the prompt type**, go to _line 151_ and type one of the following:
-    ```python
-    content = prompt_unguided + "\n\n" + batch_text
-    content = prompt_definition + "\n\n" + batch_text
-    content = prompt_full + "\n\n" + batch_text
-    ```
->[!TIP]
->If the prompt type is changed, it is advisable to also go to _line 202_ and change the name of the output accordingly:
->```python
->output_csv = f"{input_csv[0:-4]}_prompt=U_{model}.csv" ##for unguided prompts
->output_csv = f"{input_csv[0:-4]}_prompt=D_{model}.csv" ##for definition-provided prompts
->output_csv = f"{input_csv[0:-4]}_prompt=F_{model}.csv" ##for full-scheme prompts
->```
 4. Open an editor (e.g., [Kate](https://kate-editor.org/) or [VS Code](https://code.visualstudio.com/)) and type the following:
 ```python
 python -m venv venv #create a virtual environment the first time
 .\venv\Scripts\activate #activate venv
 python .\drei.py mc51.csv ##code the file "mc51"
-# deactivate
 ```
-
+5. Question 1: Are we using gemini or openai? Example: `gemini` or `openai`
+6. Question 2: Which model are we using? Example: `gemini-2.0-flash` or `gpt-4o-mini`
+7. Question 3: Are we using a(n) unguided, defined, or full prompt? Example: `u` or `d` or `f`
+>[!Tip]
+>If we enter nonsense to question 3, the unguided prompt will be used.
 ---
 
 ## Fancy output
