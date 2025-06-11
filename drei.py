@@ -12,8 +12,10 @@ from openai import OpenAI
 # load the API key from .env
 load_dotenv()
 
-get_ai = "openai" #"gemini" or "openai"
-model = "gpt-4o-mini"
+# set AI models and prompt types
+get_ai = input("gemini or openai? ").lower()
+model = input("Please enter the name of the model. ")
+prompt_code = input("Should be prompt be (U)nguided, (D)efined, or (F)ull? ").upper()
 
 # coding criteria
 ITEMS = [
@@ -147,8 +149,15 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
         "{{...}}\n```"
    )
 
+    if prompt_code == "D":
+        get_prompt = prompt_definition
+    elif prompt_code == "F":
+        get_prompt = prompt_full
+    else:
+        get_prompt = prompt_unguided
+
     batch_text = f"\n{delimiter}\n".join(dialogues)
-    content = prompt_definition + "\n\n" + batch_text
+    content = get_prompt + "\n\n" + batch_text
 
     try:
         if get_ai == "gemini":
@@ -191,20 +200,25 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
 
 def main():
     print("Loading and processing...")
-    # get_prompt = input("prompt_unguided, prompt_definition, or prompt_full? ")
-    # get_ai = input("gemini or openai? ") #!!!WHY IS THIS NOT ACCESSED??
 
     if len(sys.argv) < 2:
         print("csv file is missing: python drei.py <path_to_csv>")
         sys.exit(1)
 
     input_csv = sys.argv[1]
-    output_csv = f"{input_csv[0:-4]}_prompt=D_{model}.csv"
-    print("Using a definition-provided prompt...")
+    output_csv = f"{input_csv[0:-4]}_prompt={prompt_code}_{model}.csv"
+    print(f"Using prompt = {prompt_code} ...")
 
     if os.path.exists(output_csv):
-        output_csv = f"{output_csv[0:-4]}_(1).csv"
-    
+        i = 1
+        while True:
+            new_output_csv = f"{output_csv[0:-4]}_{i}.csv"
+            if not os.path.exists(new_output_csv):
+                os.rename(output_csv, new_output_csv)
+                output_csv = new_output_csv ##update it so that it says the right thing later.
+                break
+            i += 1
+
     df = pd.read_csv(input_csv)
 
     ##choose AI model and API key
