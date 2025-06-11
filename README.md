@@ -30,21 +30,23 @@ python -m venv venv #create a virtual environment the first time
 .\venv\Scripts\activate #activate venv
 python .\drei.py mc51.csv ##code the file "mc51"
 ```
-5. Question 1: Are we using gemini or openai? Example: `gemini` or `openai`
-6. Question 2: Which model are we using? Example: `gemini-2.0-flash` or `gpt-4o-mini`
-7. Question 3: Are we using a(n) unguided, defined, or full prompt? Example: `u` or `d` or `f`
+5. The script will then prompt us for answers:
+   - **Question 1**: Are we using (G)emini or (O)penAI? **Possible input**: `g` or `o`
+   - **Question 2**: Which model are we using? **Example input**: `gemini-2.0-flash` or `gpt-4o-mini`
+   - **Question 3**: Are we using a(n) (U)nguided, (D)efined, or (F)ull prompt? **Possible input**: `u` or `d` or `f` (Any other response will be treated as calling for an unguided prompt.)
 >[!Tip]
->If we enter nonsense to question 3, the unguided prompt will be used.
+>For Question 2, any model supported by the AI's API should work. Check for other [OpenAI models](https://platform.openai.com/docs/models) or [Gemini models](https://ai.google.dev/gemini-api/docs/models).
+
 ---
 
 ## Fancy output
 1. Prof Tsai's original script stores the coded transcript as a csv file.
-2. Sum of scores can be calculated using this [Python script](./summary.py)
+2. Sum of scores can be calculated using this [Python script](./summary.py).
 
 __Wishlist__
 - Compare English/Chinese prompts with English/Chinese transcripts.
 - Transform the scores into a 7-point Likert scale.
-- Create a simple (yet appealing) html page that shows the summary of PEER scores.
+- Create a simple (yet appealing) html page that displays the scores.
 - Create a plot that displays how the parent fared in relation to other parents with a similar-aged child.
 - Provide some advice/encouragement as to which DR strategy the parent can improve on.
 - Print this summary as a pdf to be sent to the parent (if they wish to keep a copy).
