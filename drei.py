@@ -13,9 +13,13 @@ from openai import OpenAI
 load_dotenv()
 
 # set AI models and prompt types
-get_ai = input("gemini or openai? ").lower()
-model = input("Please enter the name of the model. ")
-prompt_code = input("Should be prompt be (U)nguided, (D)efined, or (F)ull? ").upper()
+get_ai = input("(G)emini or (O)penAI? ").upper()
+model = input("Please enter the name of the model: ")
+prompt_code = input("(U)nguided, (D)efined, or (F)ull prompt? ").upper()
+if prompt_code == "D" or prompt_code == "F":
+    prompt_name = prompt_code
+else:
+    prompt_name = "U"
 
 # coding criteria
 ITEMS = [
@@ -160,13 +164,13 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
     content = get_prompt + "\n\n" + batch_text
 
     try:
-        if get_ai == "gemini":
+        if get_ai == "G":
             response = client.models.generate_content(
                 model = model,
                 # temperature=0,
                 contents = content
             )
-        elif get_ai == "openai":
+        elif get_ai == "O":
             response = client.responses.create(
                 model = model,
                 # temperature=0,
@@ -182,9 +186,9 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
         return [{item: "" for item in ITEMS} for _ in dialogues]
 
     # print("AI is working： ", response.text) ##too verbose: which utterance is being processed
-    if get_ai == "gemini":
+    if get_ai == "G":
         parts = response.text.split(delimiter)
-    elif get_ai == "openai":
+    elif get_ai == "O":
         parts = response.output_text.split(delimiter)
     results = []
     for part in parts:
@@ -206,34 +210,33 @@ def main():
         sys.exit(1)
 
     input_csv = sys.argv[1]
-    output_csv = f"{input_csv[0:-4]}_prompt={prompt_code}_{model}.csv"
-    print(f"Using prompt = {prompt_code} ...")
-
+    output_csv = f"{input_csv[0:-4]}_prompt={prompt_name}_{model}.csv"
     if os.path.exists(output_csv):
         i = 1
         while True:
             new_output_csv = f"{output_csv[0:-4]}_{i}.csv"
             if not os.path.exists(new_output_csv):
                 os.rename(output_csv, new_output_csv)
-                output_csv = new_output_csv ##update it so that it says the right thing later.
                 break
             i += 1
 
     df = pd.read_csv(input_csv)
 
     ##choose AI model and API key
-    if get_ai == "gemini":
+    if get_ai == "G":
         print("Reading GEMINI API key...")
         gemini_api_key = os.environ.get("GEMINI_API_KEY")
         if not gemini_api_key:
             gemini_api_key = input("Enter your GEMINI API key: ")
         client = genai.Client(api_key=gemini_api_key)
-    elif get_ai == "openai":
+    elif get_ai == "O":
         print("Reading OPENAI API key...")
         openai_api_key = os.environ.get("OPENAI_API_KEY")
         if not openai_api_key:
             openai_api_key = input("Enter your OPENAI API key: ")
         client = OpenAI(api_key=openai_api_key)
+
+    print(f"Getting the ({prompt_name}) prompt...")
 
     dialogue_col = select_dialogue_column(df) ##this uses function 2.1
     #print(f"使用欄位作為逐字稿：{dialogue_col}") ##too verbose: name of speech column
@@ -258,7 +261,7 @@ def main():
             batch_df.to_csv(output_csv, mode='a', index=False, header=False, encoding="utf-8-sig")
         print(f"Processing {end_idx} / {total}")
         time.sleep(1)
-    print("All processing is completed. The output is stored in ", output_csv)
+    print("All processing is completed.")
 
 if __name__ == "__main__":
     main()
