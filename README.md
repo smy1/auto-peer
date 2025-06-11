@@ -35,7 +35,8 @@ python .\drei.py mc51.csv ##code the file "mc51"
    - **Question 2**: Which model are we using? **Example input**: `gemini-2.0-flash` or `gpt-4o-mini`
    - **Question 3**: Are we using a(n) (U)nguided, (D)efined, or (F)ull prompt? **Possible input**: `u` or `d` or `f` (Any other response will be treated as calling for an unguided prompt.)
 >[!Tip]
->For Question 2, any model supported by the AI's API should work. Check for other [OpenAI models](https://platform.openai.com/docs/models) or [Gemini models](https://ai.google.dev/gemini-api/docs/models).
+>- For **Question 2**, any model supported by the AI's API should work. Check for other [OpenAI models](https://platform.openai.com/docs/models) or [Gemini models](https://ai.google.dev/gemini-api/docs/models).  
+>- For **Question 3**, *unguided* means that the PEER criteria are not defined or explained in the prompt; *defined* means that simple definitions (and examples) are provided for each of the PEER criteria in the prompt; while *full* means that the entire PEER coding scheme document (originally written to guide human coders) is attached in the prompt.
 
 ---
 
