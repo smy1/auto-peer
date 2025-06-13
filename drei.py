@@ -106,8 +106,10 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
     prompt_unguided = (
         "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
         + "\n".join(ITEMS) +
-        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。若觸及多個編碼評估, 請選一個標記為 1。"
+        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。"#若觸及多個編碼評估, 請選一個標記為 1。"
+        "若觸及多個編碼評估，completion, recall, open-ended, wh, distancing 可重复評估给分。其他編碼項目只能選一個標記為 1。"
         "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
+        "若被評估的句子和上一句是同样的句子，請不要評估那句話。"
         "請在 Notes 里简单说明評估原因。"
         " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
         f"{delimiter}\n"
@@ -117,18 +119,21 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
         "{{...}}\n```"
     )
 
+    ##definition_0610
     prompt_definition = (
         "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
         + "\n".join(ITEMS) +
-        "evaluate是對孩子給予回應、回饋、鼓勵或修正,"
-        "expand是將孩子說出來的內容加以延伸重組,"
-        "repeat是鼓勵並引導孩子說答案，而非家長重複說話, 例:你說馬,"
-        "completion是將句尾詞彙或語句空白，等待孩子用口語補上句尾詞彙,"
+        "evaluate是針對孩子說出來的內容給予肯定、修正或以完整句子再說一次,"
+        "expand是針對孩子說出來的內容增加新訊息加以延伸,"
+        "repeat是家長請孩子複述家長說過的話 ，而非家長重複說話, 例:你說馬,"
+        "completion是利用語句停頓，等待孩子完成句子,"
         "open-end是無固定答案的問句, 例:小金魚為什麼要一直逃走呢？,"
-        "wh是人事時地物問句, 例:這是什麼？馬怎麼叫？。 不包含是非問題, 例: 你有看到吗？,"
-        "distancing是協助兒童將書中部分情節與自身生活經驗做連結。"
-        "\n\n請依據評估結果，對每個項目： 若觸及則標記為 1，否則留空。 若觸及多個編碼評估, 請選一個標記為 1。"
+        "wh是人事時地物問句, 例:這是什麼？馬怎麼叫？, 不包含是非問題, 例: 你有看到吗？,"
+        "distancing是將書中情節與幼兒生活經驗做連結。"
+        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。"#若觸及多個編碼評估, 請選一個標記為 1。"
+        "若觸及多個編碼評估，completion, recall, open-ended, wh, distancing 可重复評估给分。其他編碼項目只能選一個標記為 1。"
         "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
+        "若被評估的句子和上一句是同样的句子，請不要評估那句話。"
         "請在 Notes 里简单说明評估原因。\n"
         " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
         f"{delimiter}\n"
@@ -142,8 +147,10 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
         "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
         + "\n".join(ITEMS) +
         "請用文件的定義: "+ get_definitions("peer.docx") + ##this uses function 3
-        "\n\n請依據評估結果，對每個項目： 若觸及則標記為 1，否則留空。 若觸及多個編碼評估, 請選一個標記為 1。"
+        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。"#若觸及多個編碼評估, 請選一個標記為 1。"
+        "若觸及多個編碼評估，completion, recall, open-ended, wh, distancing 可重复評估给分。其他編碼項目只能選一個標記為 1。"
         "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
+        "若被評估的句子和上一句是同样的句子，請不要評估那句話。"
         "請在 Notes 里简单说明評估原因。"
         " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
         f"{delimiter}\n"
