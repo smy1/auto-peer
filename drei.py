@@ -103,9 +103,12 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
     提示中要求模型對每筆逐字稿產生 JSON 格式回覆，
     並以指定的 delimiter 分隔各筆結果。
     """
-    prompt_unguided = (
+    ##General instructions that apply across the board regardless of how the coding scheme is defined.
+    gen_inst_1 = (
         "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
-        + "\n".join(ITEMS) +
+        + "\n".join(ITEMS)
+    )
+    gen_inst_2 = (
         "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。"#若觸及多個編碼評估, 請選一個標記為 1。"
         "若觸及多個編碼評估，completion, recall, open-ended, wh, distancing 可重复評估给分。其他編碼項目只能選一個標記為 1。"
         "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
@@ -119,10 +122,9 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
         "{{...}}\n```"
     )
 
+    ##Provide simple definitions with an example or two to illustrate.
     ##definition_0610
-    prompt_definition = (
-        "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
-        + "\n".join(ITEMS) +
+    definition = (
         "evaluate是針對孩子說出來的內容給予肯定、修正或以完整句子再說一次,"
         "expand是針對孩子說出來的內容增加新訊息加以延伸,"
         "repeat是家長請孩子複述家長說過的話 ，而非家長重複說話, 例:你說馬,"
@@ -130,35 +132,16 @@ def process_batch_dialogue(client, dialogues: list, delimiter="-----"): ##functi
         "open-end是無固定答案的問句, 例:小金魚為什麼要一直逃走呢？,"
         "wh是人事時地物問句, 例:這是什麼？馬怎麼叫？, 不包含是非問題, 例: 你有看到吗？,"
         "distancing是將書中情節與幼兒生活經驗做連結。"
-        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。"#若觸及多個編碼評估, 請選一個標記為 1。"
-        "若觸及多個編碼評估，completion, recall, open-ended, wh, distancing 可重复評估给分。其他編碼項目只能選一個標記為 1。"
-        "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
-        "若被評估的句子和上一句是同样的句子，請不要評估那句話。"
-        "請在 Notes 里简单说明評估原因。\n"
-        " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
-        f"{delimiter}\n"
-        "例如：\n"
-        "{\n  \"Prompt\": \"1\",\n  \"Evaluate\": \"\",\n  ...\n}\n"
-        f"{delimiter}\n"
-        "{{...}}\n```"
    )
 
-    prompt_full = (
-        "你是一位親子對話分析專家，請根據以下編碼規則評估家長(speaker里mot為妈妈，fat為爸爸)唸故事書時的每一句話，\n"
-        + "\n".join(ITEMS) +
-        "請用文件的定義: "+ get_definitions("peer.docx") + ##this uses function 3
-        "\n\n請依據評估結果，對每個項目：若觸及則標記為 1，否則留空。"#若觸及多個編碼評估, 請選一個標記為 1。"
-        "若觸及多個編碼評估，completion, recall, open-ended, wh, distancing 可重复評估给分。其他編碼項目只能選一個標記為 1。"
-        "若 speaker 不是 mot 或 fat(如chi是小孩)，請不要評估那句話。" ##this uses function 2.2
-        "若被評估的句子和上一句是同样的句子，請不要評估那句話。"
-        "請在 Notes 里简单说明評估原因。"
-        " 請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
-        f"{delimiter}\n"
-        "例如：\n"
-        "{\n  \"Prompt\": \"1\",\n  \"Evaluate\": \"\",\n  ...\n}\n"
-        f"{delimiter}\n"
-        "{{...}}\n```"
+    ##Provide the entire coding scheme document.
+    full = (
+        "請用文件的定義: " + get_definitions("peer.docx") ##this uses function 3
    )
+
+    prompt_unguided = gen_inst_1 + gen_inst_2 ##no extra definitions provided!
+    prompt_definition = gen_inst_1 + definition + gen_inst_2
+    prompt_full = gen_inst_1 + full + gen_inst_2
 
     if prompt_code == "D":
         get_prompt = prompt_definition
