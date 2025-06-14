@@ -206,7 +206,7 @@ def main():
         while True:
             new_output_csv = f"{output_csv[0:-4]}_{i}.csv"
             if not os.path.exists(new_output_csv):
-                os.rename(output_csv, new_output_csv)
+                output_csv = new_output_csv
                 break
             i += 1
 
@@ -251,7 +251,7 @@ def main():
             batch_df.to_csv(output_csv, mode='a', index=False, header=False, encoding="utf-8-sig")
         print(f"Processing {end_idx} / {total}")
         time.sleep(1)
-    print("All processing is completed.")
+    print(f"All processing is completed. The output is stored as {output_csv}. ")
 
 if __name__ == "__main__":
     main()
