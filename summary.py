@@ -1,7 +1,6 @@
 import glob
 from pathlib import Path
 import pandas as pd
-# import os
 
 ## create an empty DataFrame
 df = pd.DataFrame()
@@ -31,8 +30,10 @@ for csv_file in file_list:
     ##subset data
     justdr=csv[['Evaluate', 'Expand', 'Repeat', 'Completion', 'Recall', 'Open-end', 'Wh', 'Distancing']]
     sumscore=justdr.sum() ##sum every column
-    Prompt=sum(sumscore[3:8]) ##prompt score is the total of crowd
-    PEER=sum(sumscore)
+    # Prompt=sum(sumscore[3:8]) ##prompt score is the total of crowd
+    # PEER=sum(sumscore)
+    Prompt=sum(sumscore[4:8]) ##ignore completion
+    PEER=sum(sumscore[0:2, 4:8])
     # header=list(justdr.columns) ##get names of columns
     ##aggregate the data to the emptyframe
     newrow=pd.DataFrame({'ID': [kid], 'model': [model], 'PEER': [PEER],
