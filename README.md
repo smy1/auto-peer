@@ -18,7 +18,7 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 ## Usage
 ### Part 1: Transcribe the audio file
 1. Transcribe an audio recording into an excel file (see [here](https://github.com/smy1/swlab/blob/main/script/audio2xlsx.ipynb)).
-2. Convert the excel file into a csv file.
+2. Convert the excel file into a csv file (see [here](https://github.com/smy1/swlab/blob/main/script/convert_xl_csv_utf8.py)).
 
 ### Part 2: Code the transcript
 1. Download a sample transcript [here](./x33.csv) and the PEER coding scheme [here](./peer.docx).
