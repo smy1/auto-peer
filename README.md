@@ -21,14 +21,15 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 2. Convert the excel file into a csv file.
 
 ### Part 2: Code the transcript
-1. Download the PEER coding scheme [here](./peer.docx).
+1. Download a sample transcript [here](./x33.csv) and the PEER coding scheme [here](./peer.docx).
 2. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
 3. Download the Python [script](./drei.py) (which is modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py)).
 4. Open an editor (e.g., [Kate](https://kate-editor.org/) or [VS Code](https://code.visualstudio.com/)) and type the following:
 ```python
 python -m venv venv #create a virtual environment the first time
 .\venv\Scripts\activate #activate venv
-python .\drei.py mc51.csv ##code the file "mc51"
+## REMEMBER TO INSTALL PACKAGES
+python .\drei.py x33.csv ##code the file "x33.csv"
 ```
 5. The script will then prompt us for answers:
    - **Question 1**: Are we using (G)emini or (O)penAI? **Possible input**: `g` or `o`
