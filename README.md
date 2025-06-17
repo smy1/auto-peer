@@ -22,7 +22,7 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 2. Convert the excel file into a csv file (see [here](https://github.com/smy1/swlab/blob/main/script/convert_xl_csv_utf8.py)).
 
 ### Part 2: Code the transcript
-1. Download a sample transcript [here](./x33.csv) and the PEER coding scheme [here](./peer.docx).
+1. Download a [sample transcript](./x33.csv) and the [PEER coding scheme](./peer.docx).
 2. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
 3. Download the [main script](./drei.py), [function script](./drei_func.py), and [prompt script](./drei_prompt.py) (all of which are modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py)).
 4. Open an editor (e.g., [Kate](https://kate-editor.org/) or [VS Code](https://code.visualstudio.com/)) and type the following:
