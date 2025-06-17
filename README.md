@@ -23,7 +23,7 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 ### Part 2: Code the transcript
 1. Download a sample transcript [here](./x33.csv) and the PEER coding scheme [here](./peer.docx).
 2. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
-3. Download the Python [script](./drei.py) (which is modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py)).
+3. Download the [main script](./drei.py), [function script](./drei_func.py), and [prompt script](./drei_prompt.py) (all of which are modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py)).
 4. Open an editor (e.g., [Kate](https://kate-editor.org/) or [VS Code](https://code.visualstudio.com/)) and type the following:
 ```python
 python -m venv venv #create a virtual environment the first time
@@ -31,7 +31,7 @@ python -m venv venv #create a virtual environment the first time
 ## REMEMBER TO INSTALL PACKAGES
 python .\drei.py x33.csv ##code the file "x33.csv"
 ```
-5. The script will then prompt us for answers:
+5. The script will then prompt for answers:
    - **Question 1**: Are we using (G)emini or (O)penAI? **Possible input**: `g` or `o`
    - **Question 2**: Which model are we using? **Example input**: `gemini-2.0-flash` or `gpt-4o-mini`
    - **Question 3**: Are we using a(n) (U)nguided, (D)efined, or (F)ull prompt? **Possible input**: `u` or `d` or `f` (Any other response will be treated as calling for an unguided prompt.)
