@@ -12,7 +12,8 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
   - Evaluate: Praise or correct a child's utterance
   - Expand: Elaborate on a child's utterance
   - Repeat: Request a child to say the correct answer
-
+- Flowchart of the AI's task  
+  <img src="./flowchart.png" width=auto height="500">
 ---
 
 ## Usage
