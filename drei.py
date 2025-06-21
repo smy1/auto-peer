@@ -84,7 +84,9 @@ def main():
         batch = df.iloc[start_idx:end_idx]
         dialogues = batch[dialogue_col].tolist()
         dialogues = [str(d).strip() for d in dialogues]
-        batch_results = drp.process_batch_dialogue(client, dialogues, ITEMS=ITEMS,
+        speakers = batch[speaker_col].tolist()
+        speakers = [str(d).strip() for d in speakers]
+        batch_results = drp.process_batch_dialogue(client, speakers, dialogues, ITEMS=ITEMS,
                                                    prompt_code=prompt_code, get_ai=get_ai, model=model) ##this uses function 4 (which uses function 1)
         batch_df = batch.copy()
         for item in ITEMS:

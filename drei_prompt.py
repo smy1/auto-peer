@@ -18,7 +18,7 @@ def get_definitions(docx_path):
     text = "\n".join([para.text for para in doc.paragraphs])
     return text
 
-def process_batch_dialogue(client, dialogues: list, ITEMS, prompt_code, get_ai, model, delimiter="-----"):
+def process_batch_dialogue(client, speakers: list, dialogues: list, ITEMS, prompt_code, get_ai, model, delimiter="-----"):
     """
     將多筆逐字稿合併成一個批次請求。
     提示中要求模型對每筆逐字稿產生 JSON 格式回覆，
@@ -71,7 +71,10 @@ def process_batch_dialogue(client, dialogues: list, ITEMS, prompt_code, get_ai, 
     else:
         get_prompt = prompt_unguided
 
-    batch_text = f"\n{delimiter}\n".join(dialogues)
+    ##Combine the speaker and dialogue into a formatted string (OpenAI)
+    # batch_text = f"\n{delimiter}\n".join(dialogues) ##(original from Prof Tsai)
+    batch_text = "\n".join(f"{speakers[i]}: {dialogues[i]}" for i in range(len(dialogues)))
+    batch_text = f"\n{delimiter}\n".join(batch_text.split('\n'))
     content = get_prompt + "\n\n" + batch_text
 
     try:
