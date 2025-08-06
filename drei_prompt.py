@@ -58,7 +58,7 @@ def process_batch_dialogue(client, speakers: list, dialogues: list, ITEMS, promp
 
     ##Provide the entire coding scheme document
     full = (
-        "請用文件的定義: " + get_definitions("peer_20250725_full.docx")
+        "請用文件的定義: " + get_definitions("peer_full.docx")
    )
 
     prompt_unguided = gen_inst_1 + gen_inst_2 ##no extra definitions provided!
