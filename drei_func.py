@@ -53,8 +53,23 @@ def select_speaker_column(chunk: pd.DataFrame) -> str: ##function 2.2: select sp
     優先檢查常見欄位名稱
     若都不存在，則回傳第一個欄位。
     """
-    preferred = ["who", "speaker", "dyad"]
+    preferred = ["who", "speaker", "Speaker"]
     for col in preferred:
         if col in chunk.columns:
             return col
     return chunk.columns[0]
+
+def get_time_diff(datetime1, datetime2, model, total):
+    """
+    Calculate the time needed for AI to process one transcript
+    """
+    difftime = datetime2-datetime1
+    difftime = difftime.total_seconds()
+    if difftime >= 60:
+        diffmin = difftime//60
+        diffsec = difftime%60
+    else:
+        diffmin = 0
+        diffsec = difftime
+    print(f"{model} took {diffmin} minute(s) and {round(diffsec, 2)} second(s) to process {total} sentences.\n")
+

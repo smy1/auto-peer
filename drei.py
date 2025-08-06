@@ -5,7 +5,7 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from openai import OpenAI
-from datetime import datetime
+from datetime import datetime, date
 import drei_func as drf ##functions stored externally
 import drei_prompt as drp ##prompts stored externally
 
@@ -15,11 +15,8 @@ load_dotenv()
 ## set AI models and prompt types
 get_ai = input("(G)emini or (O)penAI? ").upper()
 model = input("Please enter the name of the model: ")
-prompt_code = input("(U)nguided, (D)efined, or (F)ull prompt? ").upper()
-if prompt_code == "D" or prompt_code == "F":
-    prompt_name = prompt_code
-else:
-    prompt_name = "U"
+prompt_code = input("(U)nguided, (D)efined, (F)ull prompt? ").upper()
+prompt_name = prompt_code
 
 ## coding criteria
 ITEMS = [
@@ -38,20 +35,8 @@ ITEMS = [
 
 def main():
     if len(sys.argv) < 2:
-        print("csv file is missing: python drei.py <path_to_csv>")
+        print("excel file is missing: python drei.py <path_to_excel>")
         sys.exit(1)
-
-    input_csv = sys.argv[1]
-    output_csv = f"{input_csv[0:-4]}_prompt={prompt_name}_{model}.csv"
-    if os.path.exists(output_csv):
-        i = 1
-        while True:
-            new_output_csv = f"{output_csv[0:-4]}_{i}.csv"
-            if not os.path.exists(new_output_csv):
-                output_csv = new_output_csv
-                break
-            i += 1
-    df = pd.read_csv(input_csv)
 
     ##choose AI model and API key
     if get_ai == "G":
@@ -69,51 +54,68 @@ def main():
 
     print(f"Getting the ({prompt_name}) prompt...")
 
-    dialogue_col = drf.select_dialogue_column(df) ##this uses function 2.1
-    #print(f"使用欄位作為逐字稿：{dialogue_col}") ##too verbose: name of speech column
-    
-    speaker_col = drf.select_speaker_column(df) ##this uses function 2.2
+    ##create a subfolder to store the results
+    subfolder = f"results_{date.today()}"
+    try:
+        os.mkdir(subfolder)
+    except FileExistsError:
+        print("Subfolder exists already.")
 
-    batch_size = 10
-    total = len(df)
-    print(f"\n***THE STOPWATCH HAS STARTED*** \nTotal number of sentencces to process: {total}")
-    datetime1 = datetime.now() ##Get start time
+    ##extract a list of csv transcripts
+    input_file = sys.argv[1]
+    main = pd.read_excel(input_file)
+    file_list = main['names']
+    ##batch process the transcripts
+    for csv in file_list:
+        if os.path.exists(csv): ##continue if the file can be found
+            df = pd.read_csv(csv)
+            ##create an output file and rename it if it already exists
+            output_csv = f"{csv[0:-4]}_prompt={prompt_name}_{model}.csv"
+            if os.path.exists(f"./{subfolder}/{output_csv}"):
+                i = 1
+                while True:
+                    new_output_csv = f"{output_csv[0:-4]}_{i}.csv"
+                    if not os.path.exists(new_output_csv):
+                        output_csv = new_output_csv
+                        break
+                    i += 1
 
-    for start_idx in range(0, total, batch_size):
-        end_idx = min(start_idx + batch_size, total)
-        batch = df.iloc[start_idx:end_idx]
-        dialogues = batch[dialogue_col].tolist()
-        dialogues = [str(d).strip() for d in dialogues]
-        speakers = batch[speaker_col].tolist()
-        speakers = [str(d).strip() for d in speakers]
-        batch_results = drp.process_batch_dialogue(client, speakers, dialogues, ITEMS=ITEMS,
-                                                   prompt_code=prompt_code, get_ai=get_ai, model=model) ##this uses function 4 (which uses function 1)
-        batch_df = batch.copy()
-        for item in ITEMS:
-            batch_df[item] = [res.get(item, "") for res in batch_results]
-        if start_idx == 0:
-            batch_df.to_csv(output_csv, index=False, encoding="utf-8-sig")
-        else:
-            batch_df.to_csv(output_csv, mode='a', index=False, header=False, encoding="utf-8-sig")
-        print(f"Processing {end_idx} / {total}")
-        time.sleep(1)
+            dialogue_col = drf.select_dialogue_column(df) ##this uses function 2.1
+            speaker_col = drf.select_speaker_column(df) ##this uses function 2.2
+            #print(f"使用欄位作為逐字稿：{dialogue_col}") ##too verbose: name of speech column
 
-    print(f"All processing is completed. \n***THE STOPWATCH HAS STOPPED*** \n\nThe output is stored as {output_csv}.")
-    ##Calculate the duration taken
-    datetime2 = datetime.now() ##Get end time
-    difftime = datetime2-datetime1
-    difftime = difftime.total_seconds()
-    if difftime > 3599:
-        print("More than an hour!")
-        diffmin = "at least 60"
-        diffsec = "xx"
-    elif difftime >= 60:
-        diffmin = difftime//60
-        diffsec = difftime%60
-    else:
-        diffmin = 0
-        diffsec = difftime
-    print(f"{model} took {diffmin} minute(s) and {round(diffsec, 2)} second(s) to process {total} sentences.\n")
+            batch_size = 10
+            total = len(df)
+            print(f"\nProcessing {csv}...")
+            print(f"\n***THE STOPWATCH HAS STARTED*** \nTotal number of sentencces to process: {total}")
+            datetime1 = datetime.now() ##Get start time
+
+            for start_idx in range(0, total, batch_size):
+                end_idx = min(start_idx + batch_size, total)
+                batch = df.iloc[start_idx:end_idx]
+                dialogues = batch[dialogue_col].tolist()
+                dialogues = [str(d).strip() for d in dialogues]
+                speakers = batch[speaker_col].tolist()
+                speakers = [str(d).strip() for d in speakers]
+                batch_results = drp.process_batch_dialogue(client, speakers, dialogues, ITEMS=ITEMS,
+                                                        prompt_code=prompt_code, get_ai=get_ai, model=model) ##this uses function 4 (which uses function 1)
+                batch_df = batch.copy()
+                for item in ITEMS:
+                    batch_df[item] = [res.get(item, "") for res in batch_results]
+                if start_idx == 0:
+                    batch_df.to_csv(f"./{subfolder}/{output_csv}", index=False, encoding="utf-8-sig")
+                else:
+                    batch_df.to_csv(f"./{subfolder}/{output_csv}", mode='a', index=False, header=False, encoding="utf-8-sig")
+                print(f"Processing {end_idx} / {total}")
+                time.sleep(1)
+
+            print(f"\n***THE STOPWATCH HAS STOPPED*** \n\nThe output is stored as {output_csv}.")
+
+            ##Calculate the duration taken
+            datetime2 = datetime.now() ##Get end time
+            drf.get_time_diff(datetime1=datetime1, datetime2=datetime2, model=model, total=total)
+
+    print(f"All {len(file_list)} files have been processed.\n")
 
 if __name__ == "__main__":
     main()
