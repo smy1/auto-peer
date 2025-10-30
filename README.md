@@ -1,6 +1,7 @@
 # Automatic coding of parents' shared reading practice <img src="https://github.com/smy1/swlab/blob/main/script/swlogo.jpg" width=auto height="27">
 A video summarising the project: https://youtu.be/HqQscR9HchA  
 - [background](#background)
+- [prerequisite](#prerequisite)
 - [usage](#usage)
 <!--- [fancy output](#fancy-output)-->
 
@@ -15,24 +16,26 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 - Flowchart of the AI's task  
   <img src="./flowchart.png" width=auto height="500">
 ---
-
+## Prerequisite
+<!--### Transcribe an audio file-->
+1. Transcribe an audio recording into an excel file (see the code [here](https://github.com/smy1/swlab/blob/main/script/audio2xlsx.ipynb)).
+2. Convert the excel transcript into a csv file (see the code [here](https://github.com/smy1/swlab/blob/main/script/convert_xl_csv_utf8.py)).
+3. See a sample csv transcript [here](./x33.csv).
+<!--### Code the transcript-->
+4. Download the [PEER coding scheme](./peer_full.docx).
+5. List the csv transcripts in an excel file named as "main.xlsx" (see a sample [here](./main.xlsx)).
+6. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
+7. Install the relevant packages (to be updated).
+---
 ## Usage
-### Part 1: Transcribe the audio file
-1. Transcribe an audio recording into an excel file (see [here](https://github.com/smy1/swlab/blob/main/script/audio2xlsx.ipynb)).
-2. Convert the excel file into a csv file (see [here](https://github.com/smy1/swlab/blob/main/script/convert_xl_csv_utf8.py)).
-
-### Part 2: Code the transcript
-1. Download a [sample transcript](./x33.csv) and the [PEER coding scheme](./peer_full.docx).
-2. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
-3. Download the [main script](./drei.py), [function script](./drei_func.py), and [prompt script](./drei_prompt.py)<!-- (all of which are modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py))-->.
-4. Open an editor (e.g., [Kate](https://kate-editor.org/) or [VS Code](https://code.visualstudio.com/)) and type the following:
+1. Download and save the [main script](./drei.py), [function script](./drei_func.py), and [prompt script](./drei_prompt.py)<!-- (all of which are modified from [Prof Tsai's original script](https://github.com/peculab/autogen_project/blob/main/DRai/DRai.py))--> in a folder.
+2. Open an editor <!--(e.g., [Kate](https://kate-editor.org/) or [VS Code](https://code.visualstudio.com/))--> and type the following:
 ```python
-python -m venv venv #create a virtual environment the first time
-.\venv\Scripts\activate #activate venv
-## REMEMBER TO INSTALL PACKAGES
-python .\drei.py x33.csv ##code the file "x33.csv"
+python -m venv venv ##create a virtual environment the first time
+.\venv\Scripts\activate ##activate venv
+python .\drei.py main.xlsx ##run the main script, which will extract the csv transcripts from the excel file.
 ```
-5. The script will then prompt for answers:
+3. Once the script is run, it will prompt for the following:
    - **Question 1**: Are we using (G)emini or (O)penAI? **Possible input**: `g` or `o`
    - **Question 2**: Which model are we using? **Example input**: `gemini-2.0-flash` or `gpt-4o-mini`
    - **Question 3**: Are we using a(n) (U)nguided, (D)efined, or (F)ull prompt? **Possible input**: `u` or `d` or `f` (Any other response will be treated as calling for an unguided prompt.)
