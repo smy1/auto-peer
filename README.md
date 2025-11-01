@@ -1,4 +1,4 @@
-# Automatic coding of parents' shared reading practice <img src="https://github.com/smy1/swlab/blob/main/script/swlogo.jpg" width=auto height="27">
+# Automatic coding of parents' shared reading practice
 A video summarising the project: https://youtu.be/HqQscR9HchA  
 - [background](#background)
 - [prerequisite](#prerequisite)
