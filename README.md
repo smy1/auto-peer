@@ -23,7 +23,6 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
 4. Download the [PEER coding scheme](./peer_full.docx).
 5. List the csv transcripts in an excel file named as "main.xlsx" (see a sample [here](./main.xlsx)).
 6. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
-7. Install the relevant packages (to be updated).
 ---
 ## Usage
 1. Download and save the [main script](./drei.py), [function script](./drei_func.py), and [prompt script](./drei_prompt.py) in a folder.
