@@ -44,14 +44,18 @@ python .\drei.py main.xlsx ##run the main script, which will extract the csv tra
 ---
 
 ## Report generation
-1. Download this [folder](), which contains the python script, example files required by the script, and an example output file.
+1. Download this [folder](./generate-report), which contains the python script, example files required by the script, and an example output file.
 2. Open an editor and type the following:
 ```python
 python -m venv venv ##create a virtual environment the first time
 .\venv\Scripts\activate ##activate venv
 python .\sbr_report.py ##run the main script
 ```
-3. A pdf file will be created. The file consists of four parts:  
+3. Once the script is run, it will prompt for the following:
+   - **Question 1**: Please enter the full name of the csv file (e.g., 099_coded.csv)  
+   - **Question 2**: Please enter the child's age in years, in Arabic number (e.g., 1)  
+   - **Question 3**: Please enter the name of the model (e.g., gpt-5.1)  
+4. A pdf file will be created. The file consists of four parts:  
     a. a brief explanation of DR,  
     b. a plot of the parent's DR usage,  
     c. a summary of what the parent has done well and not so well,  
