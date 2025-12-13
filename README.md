@@ -44,11 +44,14 @@ python .\drei.py main.xlsx ##run the main script, which will extract the csv tra
 ---
 
 ## Report generation
-1. Download this [folder](./generate-report), which contains the python script, example files required by the script, and an example output file.
-2. Open an editor and type the following:
+1. Download this [folder](./generate-report), which contains the python script, a requirement text file, example files required by the script, a zip file containing Chinese fonts, and an example output file.
+2. Unzip the zipped font files.
+3. Open an editor and type the following:
 ```python
 python -m venv venv ##create a virtual environment the first time
 .\venv\Scripts\activate ##activate venv
+pip install -r requirements.txt ##install dependencies the first time
+
 python .\sbr_report.py ##run the main script
 ```
 3. Once the script is run, it will prompt for the following:
