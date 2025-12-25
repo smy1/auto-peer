@@ -1,9 +1,7 @@
 # Automatic coding of parents' shared reading practice
-A video summarising the project: https://youtu.be/HqQscR9HchA  
 - [background](#background)
 - [prerequisite](#prerequisite)
 - [usage](#usage)
-- [report generation](#report-generation)
 
 ---
 
@@ -17,7 +15,7 @@ A video summarising the project: https://youtu.be/HqQscR9HchA
   <img src="./flowchart.png" width=auto height="500">
 ---
 ## Prerequisite
-1. Transcribe an audio recording into an excel file (see the code [here](https://github.com/smy1/swlab/blob/main/script/audio2xlsx.ipynb)).
+1. Transcribe an audio recording into an excel file (see the code [here](./transcribe-audio/audio2xlsx.ipynb)).
 2. Convert the excel transcript into a csv file (must be saved with utf 8 encoding).
 3. See a sample csv transcript [here](./x33.csv).
 4. Download the [PEER coding scheme](./peer_full.docx).
@@ -39,27 +37,3 @@ python .\drei.py main.xlsx ##run the main script, which will extract the csv tra
 >[!Tip]
 >- For **Question 2**, any model supported by the LLM's API should work. Check for other [OpenAI models](https://platform.openai.com/docs/models) or [Gemini models](https://ai.google.dev/gemini-api/docs/models).  
 >- For **Question 3**, *unguided* means that the PEER criteria are not defined or explained in the prompt; *defined* means that simple definitions (and examples) are provided for each of the PEER criteria in the prompt; while *full* means that the entire PEER coding scheme document (originally written to guide human coders) is attached in the prompt.
-
----
-
-## Report generation
-1. Download this [folder](./generate-report), which contains the python script, a requirement text file, example files required by the script, a zip file containing Chinese fonts, and an example output file.
-2. Unzip the zipped font files.
-3. Get a unique API key. Create a .env file and store the key: OPENAI_API_KEY = the-API-key
-4. Open an editor and type the following:
-```python
-python -m venv venv ##create a virtual environment the first time
-.\venv\Scripts\activate ##activate venv
-pip install -r requirements.txt ##install dependencies the first time
-
-python .\sbr_report.py ##run the main script
-```
-3. Once the script is run, it will prompt for the following:
-   - **Question 1**: Please enter the full name of the csv file (e.g., 099_coded.csv)  
-   - **Question 2**: Please enter the child's age in years, in Arabic number (e.g., 1)  
-   - **Question 3**: Please enter the name of the model (e.g., gpt-5.1)  
-4. A pdf file will be created. The file consists of four parts:  
-    a. a brief explanation of DR,  
-    b. a plot of the parent's DR usage,  
-    c. a summary of what the parent has done well and not so well,  
-    d. a few suggestions for the parent to improve his/her shared reading skills.
