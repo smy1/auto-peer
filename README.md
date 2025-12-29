@@ -23,11 +23,12 @@
 6. Get a unique API key. Create a .env file and store the key: `GEMINI_API_KEY = the-API-key` or `OPENAI_API_KEY = the-API-key`
 ---
 ## Usage
-1. Download and save the [main script](./drei.py), [function script](./drei_func.py), and [prompt script](./drei_prompt.py) in a folder.
+1. Download and save the [main script](./drei.py), [function script](./drei_func.py), [prompt script](./drei_prompt.py), and [requirements list](./requirements.txt) in a folder.
 2. Open an editor and type the following:
 ```python
-python -m venv venv ##create a virtual environment the first time
+python -m venv venv ##create a virtual environment (only for the first time)
 .\venv\Scripts\activate ##activate venv
+pip install -r requirements.txt ##install external modules that are required (only for the first time)
 python .\drei.py main.xlsx ##run the main script, which will extract the csv transcripts from the excel file.
 ```
 3. Once the script is run, it will prompt for the following:
