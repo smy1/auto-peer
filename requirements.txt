@@ -1,0 +1,6 @@
+pandas
+openpyxl
+python-dotenv
+google-genai
+openai
+python-docx
