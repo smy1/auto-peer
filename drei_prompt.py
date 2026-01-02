@@ -33,6 +33,7 @@ def process_batch_dialogue(client, speakers: list, dialogues: list, ITEMS, promp
     gen_inst_2 = (
         "\n\n若觸及多個編碼規則，completion, recall, open-ended, wh, distancing 可重複標記為1。但是evaluate, expand, repeat只能擇一。"
         "speaker裡MOT為媽媽, FAT為爸爸, CHI為小孩, 若 speaker 不是媽媽或爸爸，則在Notes裡說明，並無需編碼句子。"
+        "若句子為疑問句且上一句speaker為CHI，且觸及evaluate或expand編碼規則，則優先將evaluate或expand標記為1。"
         "若句子和上一句相同，則不編碼。"
         "請在Notes裡以繁體中文簡單說明編碼原因。\n"
         "請對每筆逐字稿產生 JSON 格式回覆，並在各筆結果間用下列分隔線隔開：\n"
