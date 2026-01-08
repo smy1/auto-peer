@@ -25,7 +25,7 @@ def process_batch_dialogue(client, speakers: list, dialogues: list, ITEMS, promp
     並以指定的 delimiter 分隔各筆結果。
     """
     ##General instructions that apply across the board regardless of how the coding scheme is defined.
-    ##up-to-date_20250726
+    ##up-to-date_20251229
     gen_inst_1 = (
         "你是一位親子對話分析專家，請根據以下規則編碼家長唸故事書時的每一句話，\n"
         + "\n".join(ITEMS)+ "\n"
